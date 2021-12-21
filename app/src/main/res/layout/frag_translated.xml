@@ -26,6 +26,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvTranslated"
             android:textAlignment="center"
-            android:textColor="@color/black"/>
+            android:textColor="@color/yellow"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">translate_app</string>
+    <string name="app_name">Translate App</string>
 
     <string name="register">REGISTER</string>
     <string name="login_email_hint">Email</string>
