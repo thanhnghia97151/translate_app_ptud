@@ -25,24 +25,28 @@
             android:id="@+id/textInputEmail"
             style="@style/parent"
             android:layout_marginTop="@dimen/loginViewsMargin">
+
             <EditText
                 android:id="@+id/editTextEmail"
                 style="@style/modifiedEditText"
+                android:hint="@string/login_email_hint"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:hint="@string/login_email_hint"/>
+                android:text="abc@gmail.com" />
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputPassword"
             style="@style/parent"
             android:layout_marginTop="@dimen/loginViewsMargin">
+
             <EditText
                 android:id="@+id/editTextPassword"
                 style="@style/modifiedEditText"
                 android:hint="@string/login_password_hint"
+                android:inputType="textPassword"
                 android:maxLines="1"
-                android:inputType="textPassword"/>
+                android:text="123456" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

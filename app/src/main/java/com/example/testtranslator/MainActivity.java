@@ -3,10 +3,14 @@ package com.example.testtranslator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,17 +32,27 @@ import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOption
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     private Spinner fromSpinner, toSpinner;
     private TextInputEditText sourceEdt;
-    private ImageView micTv;
+    private ImageView micTv,idRead,imgTranslatedRead;
     private MaterialButton translateBtn;
-    private TextView translatedTV;
+    private TextView translatedTV,tvTranslated;
+    private TextToSpeech textToSpeech;
+    private TextToSpeech textToSpeechTranslated;
+    private boolean ready;
+    private boolean readyTranslated;
+    private Locale languageLocale=null;
+    private Locale languageLocaleTranslated=null;
 
-    String[] fromLanguages = {"From", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese"};
-    String[] toLanguages = {"To", "English", "Afrikanns", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese"};
+
+
+    String[] fromLanguages = {"From", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian"};
+    String[] toLanguages = {"To", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian"};
 
     private static final int REQUEST_PERMISSION_CODE = 1;
     int languageCode, fromLanguageCode=0, toLanguageCode = 0;
@@ -53,11 +67,45 @@ public class MainActivity extends AppCompatActivity {
         micTv = findViewById(R.id.idIVMic);
         translateBtn = findViewById(R.id.idBtnTranslate);
         translatedTV = findViewById(R.id.idTVTranslatedTV);
+        tvTranslated = findViewById(R.id.tvTranslated);
+        idRead = findViewById(R.id.idRead);
+        imgTranslatedRead = findViewById(R.id.imgTranslatedRead);
+
+        imgTranslatedRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speakOutTranslated();
+            }
+        });
+
+        idRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speakOut();
+            }
+        });
+
+        //Ghi chú: chỉ đọc được các ngôn ngữ
+//        en_US
+//        de_DE
+//        fr
+//        es_ES
+//        de
+//        en
+//        it_IT
+//        it
+//        en_GB
+//        es
+//        fr_FR
+
+
 
         fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 fromLanguageCode = getLanguageCode(fromLanguages[i]);
+                TextTOSpeech();
+
             }
 
             @Override
@@ -73,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 toLanguageCode = getLanguageCode(toLanguages[i]);
+
             }
 
             @Override
@@ -107,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE,Locale.getDefault());
                 i.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speak to convert into text!");
                 try{
                     startActivityForResult(i,REQUEST_PERMISSION_CODE);
@@ -120,6 +169,131 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private  void TextToSpeechTranslated(){
+        textToSpeechTranslated = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                Log.e("TTS", "TextToSpeech.OnInitListener.onInit...");
+                printOutSupportedLanguagesTranslated();
+                setTextToSpeechLanguageTranslated();
+            }
+        });
+    }
+    private void TextTOSpeech(){
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                Log.e("TTS", "TextToSpeech.OnInitListener.onInit...");
+                printOutSupportedLanguages();
+                setTextToSpeechLanguage();
+            }
+        });
+    }
+    private void printOutSupportedLanguagesTranslated(){
+        // Supported Languages
+        Set<Locale> supportedLanguages = textToSpeechTranslated.getAvailableLanguages();
+        if(supportedLanguages!= null) {
+            for (Locale lang : supportedLanguages) {
+                Log.e("TTS", "Supported Language: " + lang);
+            }
+        }
+    }
+    private void printOutSupportedLanguages()  {
+        // Supported Languages
+        Set<Locale> supportedLanguages = textToSpeech.getAvailableLanguages();
+        if(supportedLanguages!= null) {
+            for (Locale lang : supportedLanguages) {
+                Log.e("TTS", "Supported Language: " + lang);
+            }
+        }
+    }
+    @Override
+    public void onPause() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        if (textToSpeechTranslated != null) {
+            textToSpeechTranslated.stop();
+            textToSpeechTranslated.shutdown();
+        }
+        super.onPause();
+    }
+    private void speakOutTranslated(){
+        if (tvTranslated.getText().toString()!="" && languageLocaleTranslated!=null){
+            if (!readyTranslated) {
+                Toast.makeText(this, "Text to Speech not ready", Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Text to Speak
+            String toSpeak = tvTranslated.getText().toString();
+            Toast.makeText(this, toSpeak, Toast.LENGTH_SHORT).show();
+            // A random String (Unique ID).
+            String utteranceId = UUID.randomUUID().toString();
+            textToSpeechTranslated.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+        }
+    }
+    private void speakOut() {
+        if (sourceEdt.getText().toString()!="" && languageLocale!=null){
+            if (!ready) {
+                Toast.makeText(this, "Text to Speech not ready", Toast.LENGTH_LONG).show();
+                return;
+            }
+            // Text to Speak
+            String toSpeak = sourceEdt.getText().toString();
+            Toast.makeText(this, toSpeak, Toast.LENGTH_SHORT).show();
+            // A random String (Unique ID).
+            String utteranceId = UUID.randomUUID().toString();
+            textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+        }
+
+    }
+
+    private void setTextToSpeechLanguageTranslated(){
+        Locale language = languageLocaleTranslated;
+        if (language == null) {
+            this.readyTranslated = false;
+            Toast.makeText(this, "Not language selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int result = textToSpeechTranslated.setLanguage(language);
+        if (result == TextToSpeech.LANG_MISSING_DATA) {
+            this.readyTranslated = false;
+            Toast.makeText(this, "Missing language data", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            this.readyTranslated = false;
+            Toast.makeText(this, "Language not supported", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            this.readyTranslated = true;
+            Locale currentLanguage = textToSpeechTranslated.getVoice().getLocale();
+            Toast.makeText(this, "Language " + currentLanguage, Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void setTextToSpeechLanguage() {
+        Locale language = languageLocale;
+        if (language == null) {
+            this.ready = false;
+            Toast.makeText(this, "Not language selected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int result = textToSpeech.setLanguage(language);
+        if (result == TextToSpeech.LANG_MISSING_DATA) {
+            this.ready = false;
+            Toast.makeText(this, "Missing language data", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            this.ready = false;
+            Toast.makeText(this, "Language not supported", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            this.ready = true;
+            Locale currentLanguage = textToSpeech.getVoice().getLocale();
+            Toast.makeText(this, "Language " + currentLanguage, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -148,7 +322,11 @@ public class MainActivity extends AppCompatActivity {
                 translator.translate(source).addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String s) {
-                        translatedTV.setText(s);
+                        translatedTV.setText("Complete!");
+
+                        tvTranslated.setText(s);
+                        TextToSpeechTranslated();
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -169,6 +347,8 @@ public class MainActivity extends AppCompatActivity {
         int languageCode = 0;
         switch (language){
             case "English":
+                languageLocale=Locale.US;
+                languageLocaleTranslated=Locale.US;
                 languageCode = FirebaseTranslateLanguage.EN;
                 break;
             case "Afrikaans":
@@ -196,13 +376,36 @@ public class MainActivity extends AppCompatActivity {
                 languageCode = FirebaseTranslateLanguage.HI;
                 break;
             case "Urdu":
+
                 languageCode = FirebaseTranslateLanguage.UR;
                 break;
             case "China":
+                languageLocale=Locale.CHINA;
+                languageLocaleTranslated=Locale.CHINA;
                 languageCode = FirebaseTranslateLanguage.ZH;
                 break;
             case "Vietnamese":
                 languageCode = FirebaseTranslateLanguage.VI;
+                break;
+            case "Korean":
+                languageLocale=Locale.KOREAN;
+                languageLocaleTranslated=Locale.KOREAN;
+                languageCode = FirebaseTranslateLanguage.KO;
+                break;
+            case "Japanese":
+                languageLocale=Locale.JAPANESE;
+                languageLocaleTranslated=Locale.JAPANESE;
+                languageCode = FirebaseTranslateLanguage.JA;
+                break;
+            case "French":
+                languageLocale=Locale.FRENCH;
+                languageLocaleTranslated=Locale.FRENCH;
+                languageCode = FirebaseTranslateLanguage.FR;
+                break;
+            case "Italian":
+                languageLocale=Locale.ITALIAN;
+                languageLocaleTranslated=Locale.ITALIAN;
+                languageCode = FirebaseTranslateLanguage.IT;
                 break;
         }
         return  languageCode;
