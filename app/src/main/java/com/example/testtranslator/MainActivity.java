@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner fromSpinner, toSpinner;
     private TextInputEditText sourceEdt;
-    private ImageView micTv,idRead,imgTranslatedRead;
+    private ImageView micTv,idRead,imgTranslatedRead,imgCamera;
     private MaterialButton translateBtn;
     private TextView translatedTV,tvTranslated;
     private TextToSpeech textToSpeech;
@@ -70,6 +70,20 @@ public class MainActivity extends AppCompatActivity {
         tvTranslated = findViewById(R.id.tvTranslated);
         idRead = findViewById(R.id.idRead);
         imgTranslatedRead = findViewById(R.id.imgTranslatedRead);
+        imgCamera = findViewById(R.id.idCamera);
+
+        //
+        Intent intent = this.getIntent();
+        String resultDetectTextFromImage = intent.getStringExtra("result");
+        sourceEdt.setText(resultDetectTextFromImage);
+        //
+
+        imgCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,ScannerActivity.class));
+            }
+        });
 
         imgTranslatedRead.setOnClickListener(new View.OnClickListener() {
             @Override
