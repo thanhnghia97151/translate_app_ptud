@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    String[] fromLanguages = {"From", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian"};
-    String[] toLanguages = {"To", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian"};
+    String[] fromLanguages = {"From", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian","German"};
+    String[] toLanguages = {"To", "English", "Afrikaans", "Arabic", "Belarusian", "Bengali", "Catalan", "Czech", "Hindi", "Urdu", "Welsh", "China", "Vietnamese","Korean","Japanese","French","Italian","German"};
 
     private static final int REQUEST_PERMISSION_CODE = 1;
     int languageCode, fromLanguageCode=0, toLanguageCode = 0;
@@ -430,6 +430,11 @@ public class MainActivity extends AppCompatActivity {
                 languageLocale=Locale.ITALIAN;
                 languageLocaleTranslated=Locale.ITALIAN;
                 languageCode = FirebaseTranslateLanguage.IT;
+                break;
+            case "German":
+                languageLocale=Locale.GERMAN;
+                languageLocaleTranslated=Locale.GERMAN;
+                languageCode = FirebaseTranslateLanguage.DE;
                 break;
         }
         return  languageCode;
