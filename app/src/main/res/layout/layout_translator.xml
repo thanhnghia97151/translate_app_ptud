@@ -12,6 +12,7 @@
     >
 
     <LinearLayout
+
         style="@style/linearParent"
         android:layout_gravity="center"
         android:padding="@dimen/loginViewsMargin"
@@ -85,16 +86,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/idIVMic"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:src="@drawable/ic_baseline_mic_24"
                 app:tint="@color/yellow" />
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/idCamera"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
@@ -111,8 +112,8 @@
                 android:src="@drawable/ic_baseline_image_24"
                 app:tint="@color/yellow" />
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/idRead"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
@@ -120,8 +121,8 @@
                 android:src="@drawable/ic_baseline_volume_down_24"
                 app:tint="@color/yellow" />
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/idTrash"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"

@@ -201,16 +201,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private  void TextToSpeechTranslated(){
-        textToSpeechTranslated = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                Log.e("TTS", "TextToSpeech.OnInitListener.onInit...");
-                printOutSupportedLanguagesTranslated();
-                setTextToSpeechLanguageTranslated();
-            }
-        });
-    }
+
     private void TextTOSpeech(){
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -221,15 +212,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void printOutSupportedLanguagesTranslated(){
-        // Supported Languages
-        Set<Locale> supportedLanguages = textToSpeechTranslated.getAvailableLanguages();
-        if(supportedLanguages!= null) {
-            for (Locale lang : supportedLanguages) {
-                Log.e("TTS", "Supported Language: " + lang);
-            }
-        }
-    }
+
     private void printOutSupportedLanguages()  {
         // Supported Languages
         Set<Locale> supportedLanguages = textToSpeech.getAvailableLanguages();
@@ -245,24 +228,19 @@ public class MainActivity extends AppCompatActivity {
             textToSpeech.stop();
             textToSpeech.shutdown();
         }
-        if (textToSpeechTranslated != null) {
-            textToSpeechTranslated.stop();
-            textToSpeechTranslated.shutdown();
-        }
+
         super.onPause();
     }
     private void speakOutTranslated(){
-        if (tvTranslated.getText().toString()!="" && languageLocaleTranslated!=null){
-            if (!readyTranslated) {
+        if (tvTranslated.getText().toString()!="" && languageLocale!=null){
+            if (!ready) {
                 Toast.makeText(this, "Text to Speech not ready", Toast.LENGTH_LONG).show();
                 return;
             }
-            // Text to Speak
             String toSpeak = tvTranslated.getText().toString();
             Toast.makeText(this, toSpeak, Toast.LENGTH_SHORT).show();
-            // A random String (Unique ID).
             String utteranceId = UUID.randomUUID().toString();
-            textToSpeechTranslated.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+            textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
         }
     }
     private void speakOut() {
@@ -279,30 +257,10 @@ public class MainActivity extends AppCompatActivity {
             textToSpeech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
         }
 
+
     }
 
-    private void setTextToSpeechLanguageTranslated(){
-        Locale language = languageLocaleTranslated;
-        if (language == null) {
-            this.readyTranslated = false;
-            Toast.makeText(this, "Not language selected", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        int result = textToSpeechTranslated.setLanguage(language);
-        if (result == TextToSpeech.LANG_MISSING_DATA) {
-            this.readyTranslated = false;
-            Toast.makeText(this, "Missing language data", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
-            this.readyTranslated = false;
-            Toast.makeText(this, "Language not supported", Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            this.readyTranslated = true;
-            Locale currentLanguage = textToSpeechTranslated.getVoice().getLocale();
-            Toast.makeText(this, "Language " + currentLanguage, Toast.LENGTH_SHORT).show();
-        }
-    }
+
     private void setTextToSpeechLanguage() {
         Locale language = languageLocale;
         if (language == null) {
@@ -357,7 +315,8 @@ public class MainActivity extends AppCompatActivity {
                         translatedTV.setText("Complete!");
 
                         tvTranslated.setText(s);
-                        TextToSpeechTranslated();
+
+                        TextTOSpeech();
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -377,10 +336,10 @@ public class MainActivity extends AppCompatActivity {
 
     public int getLanguageCode(String language){
         int languageCode = 0;
+        languageLocale=Locale.US;
         switch (language){
             case "English":
-                languageLocale=Locale.US;
-                languageLocaleTranslated=Locale.US;
+
                 languageCode = FirebaseTranslateLanguage.EN;
                 break;
             case "Afrikaans":
@@ -412,36 +371,33 @@ public class MainActivity extends AppCompatActivity {
                 languageCode = FirebaseTranslateLanguage.UR;
                 break;
             case "China":
-                languageLocale=Locale.CHINA;
-                languageLocaleTranslated=Locale.CHINA;
+
                 languageCode = FirebaseTranslateLanguage.ZH;
                 break;
             case "Vietnamese":
                 languageCode = FirebaseTranslateLanguage.VI;
                 break;
             case "Korean":
-                languageLocale=Locale.KOREAN;
-                languageLocaleTranslated=Locale.KOREAN;
+
                 languageCode = FirebaseTranslateLanguage.KO;
                 break;
             case "Japanese":
-                languageLocale=Locale.JAPANESE;
-                languageLocaleTranslated=Locale.JAPANESE;
+
                 languageCode = FirebaseTranslateLanguage.JA;
                 break;
             case "French":
-                languageLocale=Locale.FRENCH;
-                languageLocaleTranslated=Locale.FRENCH;
+
+
                 languageCode = FirebaseTranslateLanguage.FR;
                 break;
             case "Italian":
-                languageLocale=Locale.ITALIAN;
-                languageLocaleTranslated=Locale.ITALIAN;
+
+
                 languageCode = FirebaseTranslateLanguage.IT;
                 break;
             case "German":
-                languageLocale=Locale.GERMAN;
-                languageLocaleTranslated=Locale.GERMAN;
+
+
                 languageCode = FirebaseTranslateLanguage.DE;
                 break;
         }

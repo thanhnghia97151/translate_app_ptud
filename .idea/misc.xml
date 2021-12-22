@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/TestTranslator/app/src/main/res/drawable/button_background.xml" value="0.1" />
+        <entry key="..\:/TestTranslator/app/src/main/res/drawable/ic_login_bk.xml" value="0.30092592592592593" />
+        <entry key="..\:/TestTranslator/app/src/main/res/drawable/login_shape_bk.xml" value="0.30092592592592593" />
         <entry key="..\:/TestTranslator/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/TestTranslator/app/src/main/res/layout/activity_main.xml" value="0.11388888888888889" />
         <entry key="..\:/TestTranslator/app/src/main/res/layout/activity_register.xml" value="0.1" />
